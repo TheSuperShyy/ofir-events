@@ -1,0 +1,16 @@
+{
+  "name": "ofir-inventory-upload",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Ofir Events — PDF upload page. Sends price-quote / approved-order PDFs to the n8n inventory webhook.",
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001"
+  },
+  "dependencies": {
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
