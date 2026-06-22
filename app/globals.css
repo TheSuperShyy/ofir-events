@@ -22,12 +22,31 @@ body{
 }
 .card{
   background:var(--card);
-  width:100%; max-width:560px;
+  width:100%; max-width:760px;
   border:1px solid var(--line);
   border-radius:18px;
   box-shadow:var(--shadow);
   padding:34px 30px 28px;
   text-align:center;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  text-align:center;
+}
+@media (max-width:620px){
+  .grid{ grid-template-columns:1fr; }
+}
+.box{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fcfdfa;
+  padding:18px 16px 16px;
+}
+.box-title{
+  font-size:15.5px; color:var(--gray); font-weight:700; margin:0 0 12px;
 }
 .logo{ width:230px; max-width:78%; height:auto; margin:2px auto 18px; display:block; }
 h1{ font-size:21px; color:var(--gray); margin:0 0 6px; font-weight:700; }

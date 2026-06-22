@@ -28,8 +28,14 @@ export async function POST(req) {
     return Response.json({ ok: false, error: 'PDF files only' }, { status: 415 });
   }
 
+  // 'quote' | 'order' — which box it came from. n8n ignores it today (routing is from the PDF),
+  // but it's forwarded so the automation can log/validate the channel later without a UI change.
+  const kind = form.get('kind');
+  const hint = kind === 'order' ? 'ORDER' : kind === 'quote' ? 'QUOTE' : '';
+
   const fwd = new FormData();
   fwd.append('file', file, name);
+  if (hint) fwd.append('doc_type_hint', hint);
 
   let res;
   try {

@@ -2,7 +2,10 @@
 
 import { useRef, useState } from 'react';
 
-export default function Page() {
+// One self-contained uploader. `kind` ('quote' | 'order') is sent alongside the file so the
+// automation can audit which box a doc came from. Routing in n8n is still decided from the PDF
+// itself (PQ vs SO), so the two boxes are independent and never block each other.
+function Uploader({ kind, title, hint }) {
   const [file, setFile] = useState(null);
   const [state, setState] = useState('idle'); // idle | busy | ok | err
   const [msg, setMsg] = useState('');
@@ -28,6 +31,7 @@ export default function Page() {
     try {
       const fd = new FormData();
       fd.append('file', file, file.name);
+      fd.append('kind', kind); // 'quote' | 'order' — channel hint for the automation's audit log
       const r = await fetch('/api/upload', { method: 'POST', body: fd });
       const j = await r.json().catch(() => ({}));
       if (r.ok && j.ok) {
@@ -42,13 +46,8 @@ export default function Page() {
   }
 
   return (
-    <main className="card">
-      <img className="logo" src="/logo.png" alt="אופיר אירועים — השכרת ציוד" />
-      <h1>העלאת מסמך למלאי</h1>
-      <p className="sub">
-        העלו הצעת מחיר (PQ) או הזמנה מאושרת בקובץ PDF.
-        המערכת תקרא את המסמך ותעדכן את המלאי לפי תאריך האירוע.
-      </p>
+    <section className="box">
+      <h2 className="box-title">{title}</h2>
 
       <div
         className={'drop' + (drag ? ' drag' : '')}
@@ -59,7 +58,7 @@ export default function Page() {
       >
         <div className="icon">📄</div>
         <div className="big">גררו לכאן קובץ PDF או לחצו לבחירה</div>
-        <div className="small">PQ (הצעת מחיר) או הזמנה מאושרת בלבד</div>
+        <div className="small">{hint}</div>
         <input
           ref={inputRef}
           type="file"
@@ -82,6 +81,32 @@ export default function Page() {
 
       <div className={'status ' + (state === 'ok' ? 'ok' : state === 'err' ? 'err' : state === 'busy' ? 'busy' : '')}>
         {msg}
+      </div>
+    </section>
+  );
+}
+
+export default function Page() {
+  return (
+    <main className="card">
+      <img className="logo" src="/logo.png" alt="אופיר אירועים — השכרת ציוד" />
+      <h1>העלאת מסמך למלאי</h1>
+      <p className="sub">
+        העלו הצעת מחיר (PQ) או הזמנה מאושרת בקובץ PDF.
+        המערכת תקרא את המסמך ותעדכן את המלאי לפי תאריך האירוע.
+      </p>
+
+      <div className="grid">
+        <Uploader
+          kind="quote"
+          title="הצעת מחיר (PQ)"
+          hint="קובץ PDF של הצעת מחיר בלבד"
+        />
+        <Uploader
+          kind="order"
+          title="הזמנה מאושרת"
+          hint="קובץ PDF של הזמנה מאושרת בלבד"
+        />
       </div>
 
       <div className="foot">אופיר אירועים — השכרת ציוד · עדכון מלאי אוטומטי</div>
